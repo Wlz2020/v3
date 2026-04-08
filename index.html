@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reveal Image with Rem Layout</title>
+    <link rel="stylesheet" href="./index.css" />
+    <script src="./dist/jeelizFaceFilter.js"></script>
+    <script src="./helpers/HeadControls.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="background-image"></div>
+      <div id="imageReveal" class="reveal-image"></div>
+
+      <div class="place-flag place-flagA">A</div>
+      <div class="place-flag place-flagB">B</div>
+      <div class="place-flag place-flagC">C</div>
+      <div class="place-flag place-flagD">D</div>
+      <div class="place-flag place-flagE">E</div>
+      <div class="place-flag place-flagF">F</div>
+      <div class="place-flag place-flagG">G</div>
+      <div class="place-flag place-flagH">H</div>
+      <div class="place-flag place-flagI">I</div>
+
+      <svg
+        id="lineSvg"
+        class="line-svg"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+
+      <div id="floatCard" class="float-card">
+        <div class="float-card-dot"></div>
+        <img id="floatImg" src="" alt="Detail" />
+        <div class="float-card-label" id="floatLabel"></div>
+      </div>
+    </div>
+
+    <!-- 自定义光标（对齐项目1的 img.cursor） -->
+    <div id="customCursor" class="custom-cursor"></div>
+
+    <!-- 右下角摄像头预览（对齐项目1的 canvas 样式） -->
+    <canvas id="headControlsCanvas" width="512" height="512"></canvas>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
