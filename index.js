@@ -147,51 +147,75 @@ function showCard(name, fx, fy, containerRect) {
   const rem = getRem();
   const timestamp = Date.now();
 
-  const cardW_px = 3.5 * rem;
-  const lineLen_px = 3.0 * rem;
-  const goRight = fx + lineLen_px + cardW_px < containerRect.width;
-  const dirX = goRight ? 1 : -1;
+  // 1. 先准备好图片对象，开始预加载
+  const tempImg = new Image();
+  const imgSrc = `./flagImages/${name}.png?t=${timestamp}`;
 
-  const ex = fx + dirX * lineLen_px;
-  const ey = fy - 0.4 * rem;
+  // 开启 Loading 状态（如果此时卡片已在 DOM 中）
+  floatCard.classList.add("loading");
 
-  animateLine(fx, fy, ex, ey, themeColor, () => {
-    floatCard.style.display = "flex";
+  // 2. 图片加载完成的回调
+  tempImg.onload = () => {
+    // 图片加载好了，移除 Loading
+    floatCard.classList.remove("loading");
 
-    // 设置水平位置
-    floatCard.style.left = (ex + (goRight ? 0.15 : -3.65) * rem) / rem + "rem";
+    // 执行原本的连线动画和显示逻辑
+    startPresentation();
+  };
 
-    // --- 针对 E 点的单独逻辑 ---
-    if (name === "E") {
-      floatCard.style.top = (ey - 1.0 * rem) / rem + "rem"; // E 点向上偏移 1rem
-    }
+  // 如果加载失败也要能关闭 loading
+  tempImg.onerror = () => {
+    floatCard.classList.remove("loading");
+    console.error("Image load failed");
+  };
 
-    else if (name === "C") {
-      floatCard.style.top = (ey - 2.0 * rem) / rem + "rem"; // C 点向上偏移 1rem
-    }
-    else {
-      floatCard.style.top = (ey - 0.3 * rem) / rem + "rem"; // 其他点偏移 0.3rem
-    }
+  tempImg.src = imgSrc;
 
-    if (name === "G") {
-      const img = floatCard.querySelector('img');
-      if (img) {
-        img.style.objectPosition = "top left";
+  // 将原本的动画显示逻辑封装起来
+  function startPresentation() {
+    const cardW_px = 3.5 * rem;
+    const lineLen_px = 3.0 * rem;
+    const goRight = fx + lineLen_px + cardW_px < containerRect.width;
+    const dirX = goRight ? 1 : -1;
+
+    const ex = fx + dirX * lineLen_px;
+    const ey = fy - 0.4 * rem;
+
+    animateLine(fx, fy, ex, ey, themeColor, () => {
+      floatCard.style.display = "flex";
+      floatCard.style.left = (ex + (goRight ? 0.15 : -3.65) * rem) / rem + "rem";
+
+      if (name === "E") {
+        floatCard.style.top = (ey - 1.0 * rem) / rem + "rem";
+      } else if (name === "C") {
+        floatCard.style.top = (ey - 2.0 * rem) / rem + "rem";
+      } else {
+        floatCard.style.top = (ey - 0.3 * rem) / rem + "rem";
       }
-    }
-    floatCard.style.borderColor = themeColor;
-    floatImg.src = `./flagImages/${name}.png?t=${timestamp}`;
 
-    if (guernicaEnMap[name]) {
-      floatLabel.innerHTML = guernicaEnMap[name];
-    }
+      // 处理 G 点偏移
+      if (name === "G") {
+        floatImg.style.objectPosition = "top left";
+      } else {
+        floatImg.style.objectPosition = "center";
+      }
 
-    const dot = floatCard.querySelector('.float-card-dot');
-    dot.style.background = themeColor;
-    dot.style.boxShadow = `0 0 0.12rem ${themeColor}`;
+      floatCard.style.borderColor = themeColor;
 
-    requestAnimationFrame(() => floatCard.classList.add("visible"));
-  });
+      // 此时图片已经缓存好了，赋值会瞬间显示
+      floatImg.src = imgSrc;
+
+      if (guernicaEnMap[name]) {
+        floatLabel.innerHTML = guernicaEnMap[name];
+      }
+
+      const dot = floatCard.querySelector('.float-card-dot');
+      dot.style.background = themeColor;
+      dot.style.boxShadow = `0 0 0.12rem ${themeColor}`;
+
+      requestAnimationFrame(() => floatCard.classList.add("visible"));
+    });
+  }
 }
 
 function animateLine(x1, y1, x2, y2, color, onComplete) {
