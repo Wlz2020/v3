@@ -221,29 +221,3 @@ body {
         transform: scale(1.1);
     }
 }
-
-
-/* Loading 遮罩 */
-.float-card.loading::after {
-    content: "Loading...";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.14rem;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 0.05rem 0.1rem;
-    border-radius: 0.04rem;
-    z-index: 10;
-}
-
-/* 当图片还没加载出来时，隐藏 img 标签防止闪烁 */
-.float-card.loading img {
-    opacity: 0;
-}
-
-.float-card img {
-    transition: opacity 0.3s ease;
-    opacity: 1;
-}
