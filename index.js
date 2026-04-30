@@ -35,15 +35,15 @@ const guernicaMap = {
 };
 
 const guernicaEnMap = {
-  A: "The Bull<br>Brutality / Barbarism / Indifference<br>Symbol of the Spanish Nation",
-  D: "The Wounded Horse<br>Pierced and suffering<br>Symbol: The People",
-  B: "Mother with Dead Child<br>Symbol: Innocent Civilians",
-  F: "The Lightbulb<br>Symbol: Modern War",
-  G: "Woman with Candle<br>Symbol: Hope",
-  H: "Panicking Woman<br>Symbol: Terror",
-  I: "Woman in Fire<br>Symbol: Destruction",
-  C: "Fallen Soldier<br>Symbol: Collapse",
-  E: "Little Flower<br>Symbol: Hope / Rebirth",
+  A: "The Bull<br>A cold personification of brutality and barbarism. As a symbol of Spain, it remains chillingly detached and devoid of emotion.",
+  D: "The Wounded Horse<br>Pierced and let out a silent scream. It stands as a harrowing symbol of the suffering masses.",
+  B: "Mother with Dead Child<br> Wailing toward the heavens with a limp child in her arms. A raw embodiment of the innocent lives lost.",
+  F: "The Lightbulb<br>A watchful, lidless eye looming overhead. It signifies the cold, clinical nature of modern warfare.",
+  G: "Woman with Candle<br>Emerging from the shadows to bear witness. She represents the flickering light of humanity and hope.",
+  H: "Panicking Woman<br>Her body contorted in a desperate flight. She captures the sheer terror of having nowhere to run.",
+  I: "Woman in Fire<br>Arms thrust upward in a final plea. A symbol of lives being consumed by the flames of war.",
+  C: "Fallen Soldier<br>A dismembered figure clutching a shattered blade. He marks the crushing defeat and the collapse of resistance.",
+  E: "Little Flower<br>The Little Flower: A fragile yet defiant bloom by the broken sword. It hints at the faint possibility of rebirth and hope.",
 };
 
 // ========== 灵敏度（全局） ==========
@@ -294,6 +294,16 @@ function showCard(name, fx, fy, containerRect) {
       floatCard.style.top = (ey - 2 * rem) / rem + "rem";
     } else {
       floatCard.style.top = (ey - 0.3 * rem) / rem + "rem";
+    }
+
+    if (name === "G") {
+      // 选中 floatCard 下的 img 元素
+      const cardImg = floatCard.querySelector('img');
+      
+      if (cardImg) {
+          cardImg.style.objectFit = "cover"; 
+          cardImg.style.objectPosition = "left top";
+      }
     }
 
     floatCard.style.borderColor = themeColor;
