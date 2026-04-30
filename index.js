@@ -145,6 +145,7 @@ function showCard(name, fx, fy, containerRect) {
   clearLine();
   const themeColor = flagColors[name] || "#FFFFFF";
   const rem = getRem();
+  const timestamp = Date.now();
 
   const cardW_px = 3.5 * rem;
   const lineLen_px = 3.0 * rem;
@@ -179,8 +180,7 @@ function showCard(name, fx, fy, containerRect) {
       }
     }
     floatCard.style.borderColor = themeColor;
-    floatImg.src = `./flagImages/${name}.png`;
-    floatLabel.textContent = `Location ${name} 自定义文字======`;
+    floatImg.src = `./flagImages/${name}.png?t=${timestamp}`;
 
     if (guernicaEnMap[name]) {
       floatLabel.innerHTML = guernicaEnMap[name];
