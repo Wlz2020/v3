@@ -46,16 +46,6 @@ const guernicaEnMap = {
   E: "Little Flower<br>Symbol: Hope / Rebirth",
 };
 
-// ========== 灵敏度（全局） ==========
-let HEAD_SENSIBILITY = 0.0015;
-
-const SENS_MIN = 0.001;
-const SENS_MAX = 0.015;
-const SENS_STEP = 0.0005;
-
-// ========== 控制模式 ==========
-let CONTROL_MODE = "HEAD"; // "HEAD" | "MOUSE"
-
 // ========== 状态 ==========
 let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
@@ -65,73 +55,6 @@ let currentAnimFrame = null;
 
 const getRem = () =>
   parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    e.preventDefault();
-
-    CONTROL_MODE = CONTROL_MODE === "HEAD" ? "MOUSE" : "HEAD";
-
-    HEAD_STABI.xy = [mouseX, mouseY];
-    // HEAD_STABI.speedAm = [0, 0];
-    // HEAD_STABI.speed = [0, 0];
-
-    showModeUI();
-  }
-});
-
-document.addEventListener(
-  "wheel",
-  (e) => {
-    if (CONTROL_MODE !== "HEAD") return;
-
-    e.preventDefault();
-
-    if (e.deltaY < 0) {
-      // 向上滚：增加灵敏度
-      HEAD_SENSIBILITY += SENS_STEP;
-    } else {
-      // 向下滚：降低灵敏度
-      HEAD_SENSIBILITY -= SENS_STEP;
-    }
-
-    HEAD_SENSIBILITY = Math.max(SENS_MIN, Math.min(SENS_MAX, HEAD_SENSIBILITY));
-
-    showSensUI();
-  },
-  { passive: false }
-);
-
-let sensUI = null;
-let sensTimer = null;
-
-function showSensUI() {
-  if (!sensUI) {
-    sensUI = document.createElement("div");
-    sensUI.style.position = "fixed";
-    sensUI.style.bottom = "40px";
-    sensUI.style.left = "50%";
-    sensUI.style.transform = "translateX(-50%)";
-    sensUI.style.padding = "8px 16px";
-    sensUI.style.background = "rgba(0,0,0,0.7)";
-    sensUI.style.color = "#fff";
-    sensUI.style.fontSize = "14px";
-    sensUI.style.borderRadius = "20px";
-    sensUI.style.zIndex = 9999;
-    sensUI.style.pointerEvents = "none";
-    sensUI.style.transition = "opacity 0.2s";
-
-    document.body.appendChild(sensUI);
-  }
-
-  sensUI.innerHTML = `Sensitivity: ${HEAD_SENSIBILITY.toFixed(4)}`;
-  sensUI.style.opacity = "1";
-
-  clearTimeout(sensTimer);
-  sensTimer = setTimeout(() => {
-    sensUI.style.opacity = "0";
-  }, 800);
-}
 
 // ========== 光标 & Reveal ==========
 function updateClip(x, y) {
@@ -163,59 +86,12 @@ function updateClip(x, y) {
   customCursor.classList.toggle("hover", anyActive);
 }
 
-let modeUI = null;
-let modeTimer = null;
-
-function showModeUI() {
-  if (!modeUI) {
-    modeUI = document.createElement("div");
-    modeUI.style.position = "fixed";
-    modeUI.style.top = "40px";
-    modeUI.style.left = "50%";
-    modeUI.style.transform = "translateX(-50%)";
-    modeUI.style.padding = "10px 20px";
-    modeUI.style.background = "rgba(0,0,0,0.7)";
-    modeUI.style.color = "#fff";
-    modeUI.style.fontSize = "16px";
-    modeUI.style.borderRadius = "20px";
-    modeUI.style.zIndex = 9999;
-    modeUI.style.pointerEvents = "none";
-    modeUI.style.transition = "opacity 0.2s";
-
-    document.body.appendChild(modeUI);
-  }
-
-  modeUI.innerHTML =
-    CONTROL_MODE === "HEAD" ? "🎯 Head Control" : "🖱️ Mouse Control";
-
-  modeUI.style.opacity = "1";
-
-  clearTimeout(modeTimer);
-  modeTimer = setTimeout(() => {
-    modeUI.style.opacity = "0";
-  }, 1000);
-}
-
 // ========== 鼠标 ==========
-let mousePending = false;
 document.addEventListener("mousemove", (e) => {
-  if (CONTROL_MODE !== "MOUSE") return;
-
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-
-  if (!mousePending) {
-    mousePending = true;
-    requestAnimationFrame(() => {
-      updateClip(mouseX, mouseY);
-      mousePending = false;
-    });
-  }
+  updateClip(e.clientX, e.clientY);
 });
 
 document.addEventListener("click", (e) => {
-  if (CONTROL_MODE !== "MOUSE") return;
-
   if (isPaused) {
     if (!floatCard.contains(e.target)) closeCard();
     return;
@@ -373,6 +249,7 @@ updateClip(window.innerWidth / 2, window.innerHeight / 2);
 
 // ========== 头控 ==========
 const HEAD_STABI = {
+  sensibility: 0.0015,
   am: 0.92,
   pow: 0.8,
   DEAD_ZONE: 3,
@@ -385,85 +262,40 @@ const HEAD_STABI = {
 };
 
 function callbackHeadMove(mv) {
-  if (CONTROL_MODE !== "HEAD") return;
-
-  const am = HEAD_STABI.am;
   const t = Date.now();
   const dt = Math.min(t - HEAD_STABI.t, 50);
   HEAD_STABI.t = t;
 
-  // 过滤异常跳变（与项目1一致）
   if (Math.abs(mv.dRx) > 200 || Math.abs(mv.dRy) > 200) return;
 
-  if (!isPaused && CONTROL_MODE === "HEAD") {
-    // 【关键修复】加死区：头部微小抖动时，视为 0，不积累速度
-    const dRx = Math.abs(mv.dRx) < HEAD_STABI.DEAD_ZONE ? 0 : mv.dRx;
-    const dRy = Math.abs(mv.dRy) < HEAD_STABI.DEAD_ZONE ? 0 : mv.dRy;
+  if (!isPaused) {
+    const dRx = Math.abs(mv.dRx) < 3 ? 0 : mv.dRx;
+    const dRy = Math.abs(mv.dRy) < 3 ? 0 : mv.dRy;
 
-    // 与项目1完全相同的速度计算
-    HEAD_STABI.speed[0] =
-      -Math.pow(Math.abs(dRx), HEAD_STABI.pow) * Math.sign(dRx);
-    HEAD_STABI.speed[1] =
-      -Math.pow(Math.abs(dRy), HEAD_STABI.pow) * Math.sign(dRy);
+    HEAD_STABI.speed[0] = -Math.pow(Math.abs(dRx), 0.8) * Math.sign(dRx);
+    HEAD_STABI.speed[1] = -Math.pow(Math.abs(dRy), 0.8) * Math.sign(dRy);
 
-    // 惯性滤波
     HEAD_STABI.speedAm[0] =
-      HEAD_STABI.speedAm[0] * am + (1 - am) * HEAD_STABI.speed[0];
+      HEAD_STABI.speedAm[0] * 0.92 + 0.08 * HEAD_STABI.speed[0];
     HEAD_STABI.speedAm[1] =
-      HEAD_STABI.speedAm[1] * am + (1 - am) * HEAD_STABI.speed[1];
+      HEAD_STABI.speedAm[1] * 0.92 + 0.08 * HEAD_STABI.speed[1];
 
-    // 【关键修复】死区也作用于平滑后的速度：绝对值极小时强制归零，防止永远微漂
-    if (Math.abs(HEAD_STABI.speedAm[0]) < 0.05) HEAD_STABI.speedAm[0] = 0;
-    if (Math.abs(HEAD_STABI.speedAm[1]) < 0.05) HEAD_STABI.speedAm[1] = 0;
-
-    const MAX_SPEED = 25;
-    HEAD_STABI.speedAm[0] = Math.max(
-      Math.min(HEAD_STABI.speedAm[0], MAX_SPEED),
-      -MAX_SPEED
-    );
-    HEAD_STABI.speedAm[1] = Math.max(
-      Math.min(HEAD_STABI.speedAm[1], MAX_SPEED),
-      -MAX_SPEED
-    );
-
-    HEAD_STABI.xy[0] +=
-      HEAD_SENSIBILITY *
-      dt *
-      Math.pow(Math.abs(HEAD_STABI.speedAm[1]), 2) *
-      Math.sign(HEAD_STABI.speedAm[1]);
-
-    HEAD_STABI.xy[1] -=
-      HEAD_SENSIBILITY *
-      (window.innerWidth / window.innerHeight) *
-      dt *
-      Math.pow(Math.abs(HEAD_STABI.speedAm[0]), 2) *
-      Math.sign(HEAD_STABI.speedAm[0]);
-
-    const PADDING = 150;
-    HEAD_STABI.xy[0] = Math.max(
-      PADDING,
-      Math.min(HEAD_STABI.xy[0], window.innerWidth - PADDING)
-    );
-    HEAD_STABI.xy[1] = Math.max(
-      PADDING,
-      Math.min(HEAD_STABI.xy[1], window.innerHeight - PADDING)
-    );
+    HEAD_STABI.xy[0] += 0.0015 * dt * HEAD_STABI.speedAm[1] * 20;
+    HEAD_STABI.xy[1] -= 0.0015 * dt * HEAD_STABI.speedAm[0] * 20;
 
     updateClip(HEAD_STABI.xy[0], HEAD_STABI.xy[1]);
   }
 
-  // 张嘴检测
-  const mouthOpenValue = mv.expressions[0];
-  const threshold = 0.5;
+  // 张嘴点击
+  const mouth = mv.expressions[0];
 
-  if (mouthOpenValue > threshold) {
+  if (mouth > 0.5) {
     if (!HEAD_STABI.isMouthOpen && HEAD_STABI.mouseClickEnabled) {
-      customCursor.classList.add("clicking");
-      setTimeout(() => customCursor.classList.remove("clicking"), 200);
-
       triggerClickAtCursor();
+
       HEAD_STABI.isMouthOpen = true;
       HEAD_STABI.mouseClickEnabled = false;
+
       setTimeout(() => {
         HEAD_STABI.mouseClickEnabled = true;
       }, 600);

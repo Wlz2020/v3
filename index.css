@@ -1,223 +1,229 @@
 html {
-    /* 核心适配：1920宽下 1rem = 100px */
-    font-size: calc(100vw / 19.2);
+  /* 核心适配：1920宽下 1rem = 100px */
+  font-size: calc(100vw / 19.2);
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    cursor: none;
-    background-color: #000;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  cursor: none;
+  background-color: #000;
 }
 
 .container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 
 .background-image,
 .reveal-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: contain;
-    background-position: center center;
-    background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .background-image {
-    background-image: url("./1.png");
-    z-index: 0;
+  background-image: url("./1.png");
+  z-index: 0;
 }
 
 .reveal-image {
-    background-image: url("./2.png");
-    z-index: 1;
-    clip-path: circle(0rem at 50% 50%);
-    transition: clip-path 0.05s ease-out;
-    pointer-events: none;
+  background-image: url("./2.png");
+  z-index: 1;
+  clip-path: circle(0rem at 50% 50%);
+  transition: clip-path 0.05s ease-out;
+  pointer-events: none;
 }
 
 /* 旗帜基础样式 */
 .place-flag {
-    position: absolute;
-    color: #000;
-    z-index: 999;
-    font-size: 0.22rem;
-    /* 22px */
-    width: 0.4rem;
-    /* 40px */
-    height: 0.4rem;
-    background-color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.7;
-    animation: faintPulse 2s infinite ease-in-out;
+  position: absolute;
+  color: #000;
+  z-index: 999;
+  font-size: 0.22rem;
+  /* 22px */
+  width: 0.4rem;
+  /* 40px */
+  height: 0.4rem;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  animation: faintPulse 2s infinite ease-in-out;
 }
 
 .place-flag.active {
-    animation: strongPulse 0.5s infinite ease-in-out;
-    background-color: #fff;
-    opacity: 1;
-    box-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.8);
+  animation: strongPulse 0.5s infinite ease-in-out;
+  background-color: #fff;
+  opacity: 1;
+  box-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.8);
 }
 
 /* 旗帜坐标位置 (Px / 100) */
 .place-flagA {
-    top: 2.3rem;
-    left: 2.6rem;
+  top: 2.3rem;
+  left: 2.6rem;
 }
 
 .place-flagB {
-    top: 6.0rem;
-    left: 1.5rem;
+  top: 6rem;
+  left: 1.5rem;
 }
 
 .place-flagC {
-    top: 7.8rem;
-    left: 3.5rem;
+  top: 7.8rem;
+  left: 3.5rem;
 }
 
 .place-flagD {
-    top: 2.7rem;
-    left: 7.4rem;
+  top: 2.7rem;
+  left: 7.4rem;
 }
 
 .place-flagE {
-    top: 7.4rem;
-    left: 10.0rem;
+  top: 7.4rem;
+  left: 10rem;
 }
 
 .place-flagF {
-    top: 1.02rem;
-    left: 7.4rem;
+  top: 1.02rem;
+  left: 7.4rem;
 }
 
 .place-flagG {
-    top: 3.0rem;
-    left: 13.0rem;
+  top: 3rem;
+  left: 13rem;
 }
 
 .place-flagH {
-    top: 4.8rem;
-    left: 11.9rem;
+  top: 4.8rem;
+  left: 11.9rem;
 }
 
 .place-flagI {
-    top: 3.06rem;
-    left: 17.1rem;
+  top: 3.06rem;
+  left: 17.1rem;
 }
 
 /* SVG 连线层 */
 .line-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 500;
-    overflow: visible;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 500;
+  overflow: visible;
 }
 
 .flag-line {
-    fill: none;
-    stroke-width: 0.02rem;
-    stroke-linecap: round;
+  fill: none;
+  stroke-width: 0.02rem;
+  stroke-linecap: round;
 }
 
 /* 浮动卡片 */
 .float-card {
-    position: absolute;
-    z-index: 1000;
-    width: 3.5rem;
-    /* 350px */
-    background: rgba(10, 10, 14, 0.82);
-    border: 0.01rem solid rgba(255, 255, 255, 0.18);
-    border-radius: 0.12rem;
-    overflow: hidden;
-    box-shadow: 0 0.08rem 0.32rem rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(0.12rem);
-    display: none;
-    flex-direction: column;
-    opacity: 0;
-    transform: scale(0.85) translateY(0.08rem);
-    transition: opacity 0.28s ease, transform 0.28s ease;
+  position: absolute;
+  z-index: 1000;
+  width: 3.5rem;
+  /* 350px */
+  background: rgba(10, 10, 14, 0.82);
+  border: 0.01rem solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.12rem;
+  overflow: hidden;
+  box-shadow: 0 0.08rem 0.32rem rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(0.12rem);
+  display: none;
+  flex-direction: column;
+  opacity: 0;
+  transform: scale(0.85) translateY(0.08rem);
+  transition: opacity 0.28s ease, transform 0.28s ease;
 }
 
 .float-card.visible {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 
 .float-card img {
-    width: 100%;
-    height: 2.0rem;
-    /* 固定图片高度 */
-    object-fit: cover;
-    border-bottom: 0.01rem solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  height: 2rem;
+  /* 固定图片高度 */
+  object-fit: cover;
+  border-bottom: 0.01rem solid rgba(255, 255, 255, 0.1);
 }
 
 .float-card-label {
-    padding: 0.1rem 0.12rem;
-    font-size: 0.14rem;
-    color: #ccc;
+  padding: 0.1rem 0.12rem;
+  font-size: 0.14rem;
+  color: #ccc;
 }
 
-
 .float-card-dot {
-    position: absolute;
-    top: -0.05rem;
-    left: -0.05rem;
-    width: 0.1rem;
-    height: 0.1rem;
-    border-radius: 50%;
-    z-index: 20;
-    animation: dotPulse 1.4s infinite;
+  position: absolute;
+  top: -0.05rem;
+  left: -0.05rem;
+  width: 0.1rem;
+  height: 0.1rem;
+  border-radius: 50%;
+  z-index: 20;
+  animation: dotPulse 1.4s infinite;
 }
 
 @keyframes dotPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.5);
-        opacity: 0.5;
-    }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
 }
 
 @keyframes faintPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
 
-    0%,
-    100% {
-        opacity: 0.3;
-    }
-
-    50% {
-        opacity: 0.9;
-    }
+  50% {
+    opacity: 0.9;
+  }
 }
 
 @keyframes strongPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
 
-    0%,
-    100% {
-        transform: scale(1);
-    }
+  50% {
+    transform: scale(1.1);
+  }
+}
 
-    50% {
-        transform: scale(1.1);
-    }
+#headControlsCanvas {
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  z-index: 1000;
+  transform-origin: bottom right;
+  max-height: 25%;
+  max-width: 25%;
 }
